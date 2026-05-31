@@ -35,11 +35,11 @@ class Signal:
 
     @classmethod
     def create(
-        cls, type: SignalType, value: float, timestamp: datetime | None = None
+        cls, signal_type: SignalType, value: float, timestamp: datetime | None = None
     ) -> "Signal":
         return cls(
-            type=type,
+            type=signal_type,
             value=float(value),
             timestamp=timestamp or datetime.now(timezone.utc),
-            unit=UNITS[type],
+            unit=UNITS[signal_type],
         )

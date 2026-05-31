@@ -16,16 +16,13 @@ from marex.storage import SignalStore
 
 def main() -> None:
     source = SimulatorSource(interval=1.0)
-    store = SignalStore("marex.db")
     print("Marex demo: simulador -> SQLite. Ctrl+C para salir.\n")
-    try:
+    with SignalStore("marex.db") as store:
         for tick in itertools.islice(source.stream(), 5):
             store.append_many(tick)
             depth = store.latest(SignalType.DEPTH)
             sog = store.latest(SignalType.SOG)
             print(f"depth={depth.value:5.1f} m   sog={sog.value:4.1f} kn")
-    finally:
-        store.close()
 
 
 if __name__ == "__main__":
