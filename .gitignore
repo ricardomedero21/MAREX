@@ -44,3 +44,6 @@ models/
 Thumbs.db
 .vscode/
 .idea/
+
+# ---- Claude Code (config local de la máquina) ----
+.claude/
