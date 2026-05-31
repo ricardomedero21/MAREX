@@ -27,3 +27,14 @@ def test_sample_is_deterministic():
     a = {s.type: s.value for s in sim.sample(42.0)}
     b = {s.type: s.value for s in sim.sample(42.0)}
     assert a == b
+
+
+import itertools
+
+
+def test_stream_yields_ticks_without_real_sleep(monkeypatch):
+    monkeypatch.setattr("marex.sources.simulator.time.sleep", lambda _: None)
+    sim = SimulatorSource(interval=0.0)
+    ticks = list(itertools.islice(sim.stream(), 3))
+    assert len(ticks) == 3
+    assert all(len(tick) == len(set(SignalType)) for tick in ticks)
