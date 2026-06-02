@@ -27,5 +27,9 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius,
     padding: 16,
     borderWidth: 0.5,
+    shadowColor: '#000',
+    shadowOpacity: 0.45,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 10 },
   },
 });

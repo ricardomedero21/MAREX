@@ -56,7 +56,7 @@ export function Compass({ heading, size = 150 }: { heading: number; size?: numbe
                 width: 16,
                 textAlign: 'center',
                 fontSize: d === 'N' ? 15 : 12,
-                fontWeight: '600',
+                fontFamily: theme.font.display,
                 color: d === 'N' ? theme.colors.danger : theme.colors.textMuted,
                 transform: [{ rotate: `${h}deg` }],
               }}
@@ -79,14 +79,14 @@ export function Compass({ heading, size = 150 }: { heading: number; size?: numbe
 
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center' },
-  heading: { fontSize: 32, fontWeight: '300', letterSpacing: -1, color: theme.colors.text, lineHeight: 34 },
+  heading: { fontSize: 34, fontFamily: theme.font.displayThin, letterSpacing: -0.5, color: theme.colors.text, lineHeight: 36 },
   headingLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.6,
+    fontSize: 10,
+    fontFamily: theme.font.label,
+    letterSpacing: 1.4,
     textTransform: 'uppercase',
     color: theme.colors.textMuted,
-    marginTop: 2,
+    marginTop: 3,
   },
   pointer: {
     position: 'absolute',

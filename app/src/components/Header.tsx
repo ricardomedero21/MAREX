@@ -39,12 +39,12 @@ const styles = StyleSheet.create({
   },
   left: { flexDirection: 'row', alignItems: 'center', gap: 11 },
   sub: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.6,
+    fontSize: 10.5,
+    fontFamily: theme.font.mono,
+    letterSpacing: 1.2,
     textTransform: 'uppercase',
     color: theme.colors.textMuted,
-    marginBottom: 3,
+    marginBottom: 4,
   },
-  title: { fontSize: 26, fontWeight: '600', letterSpacing: -0.6, color: theme.colors.text },
+  title: { fontSize: 27, fontFamily: theme.font.display, letterSpacing: -0.3, color: theme.colors.text },
 });

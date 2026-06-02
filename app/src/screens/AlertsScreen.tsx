@@ -8,6 +8,7 @@ import { Header } from '../components/Header';
 import { Card } from '../components/Card';
 import { StatusBadge } from '../components/Badges';
 import { Ic, IconName } from '../components/icons';
+import { Reveal } from '../components/Reveal';
 
 type Alert = { state: AlertState; icon: IconName; title: string; desc: string; time: string };
 
@@ -63,7 +64,9 @@ export function AlertsScreen() {
       />
       <View style={styles.list}>
         {alerts.map((a, i) => (
-          <AlertRow key={i} a={a} />
+          <Reveal key={i} delay={60 + i * 70}>
+            <AlertRow a={a} />
+          </Reveal>
         ))}
       </View>
     </ScrollView>
@@ -85,7 +88,7 @@ const styles = StyleSheet.create({
   },
   body: { flex: 1, minWidth: 0 },
   titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8 },
-  title: { fontSize: 15.5, fontWeight: '600', letterSpacing: -0.2, color: theme.colors.text, flex: 1 },
-  time: { fontSize: 11, color: theme.colors.textMuted },
-  desc: { fontSize: 13, color: theme.colors.textMuted, marginTop: 5, lineHeight: 19 },
+  title: { fontSize: 15.5, fontFamily: theme.font.displayMed, letterSpacing: -0.1, color: theme.colors.text, flex: 1 },
+  time: { fontSize: 10.5, fontFamily: theme.font.mono, color: theme.colors.textMuted },
+  desc: { fontSize: 12.5, fontFamily: theme.font.mono, color: theme.colors.textMuted, marginTop: 5, lineHeight: 18 },
 });

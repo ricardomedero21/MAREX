@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 0.5,
   },
-  pillText: { fontSize: 11, fontWeight: '600', letterSpacing: 1 },
+  pillText: { fontSize: 10.5, fontFamily: theme.font.label, letterSpacing: 1.2 },
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -74,5 +74,5 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     borderWidth: 0.5,
   },
-  badgeText: { fontSize: 10.5, fontWeight: '600', letterSpacing: 0.8 },
+  badgeText: { fontSize: 10, fontFamily: theme.font.label, letterSpacing: 1 },
 });

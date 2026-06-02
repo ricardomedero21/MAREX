@@ -2,32 +2,48 @@
 // Instrumento marino premium (estilo Garmin/Rolex), glow sutil.
 export const theme = {
   colors: {
-    background: '#0A0E1A', // fondo principal — casi negro azul marino
-    surface: '#111827', // tarjetas y módulos
-    surfaceElevated: '#1C2333', // modales, sheets, tab bar
-    surfaceHi: '#232C40', // hover / borde superior elevado
+    background: '#000000', // negro puro — cabina aeroespacial
+    backgroundTop: '#0B1220', // tinte azul para el degradado superior
+    backgroundMid: '#05070D', // medio del degradado
+    surface: 'rgba(18,24,38,0.72)', // tarjetas (glass sobre negro)
+    surfaceSolid: '#0E1320', // superficie sólida cuando hace falta
+    surfaceElevated: 'rgba(22,28,44,0.86)', // tab bar, sheets
+    surfaceHi: '#1A2236', // hover / botones internos
     primary: '#1E6FFF', // azul eléctrico — acento principal
     accent: '#00D4FF', // cyan náutico
-    ok: '#00C896', // estado seguro
+    ok: '#00E0A4', // estado seguro
     warning: '#FFB800', // alerta moderada
     danger: '#FF3B30', // peligro / crítico
     text: '#F5F7FF', // texto principal
     textMuted: '#6B7A99', // labels y subtítulos
 
     // tintes
-    hairline: 'rgba(120,150,200,0.12)',
-    hairlineStrong: 'rgba(120,150,200,0.20)',
+    hairline: 'rgba(120,150,200,0.10)',
+    hairlineStrong: 'rgba(120,150,200,0.18)',
     dangerTint: 'rgba(255,59,48,0.08)',
-    okTint: 'rgba(0,200,150,0.10)',
+    okTint: 'rgba(0,224,164,0.10)',
     warningTint: 'rgba(255,184,0,0.10)',
     primaryTint: 'rgba(30,111,255,0.12)',
     accentTint: 'rgba(0,212,255,0.10)',
   },
-  radius: 20,
+  // Fuentes aeroespaciales (cargadas en App.tsx).
+  font: {
+    display: 'Saira_600SemiBold', // títulos
+    displayThin: 'Saira_200ExtraLight', // números grandes (telemetría)
+    displayLight: 'Saira_300Light',
+    displayMed: 'Saira_500Medium',
+    label: 'Saira_500Medium', // labels en mayúscula
+    mono: 'JetBrainsMono_400Regular', // datos técnicos / coordenadas
+    monoMed: 'JetBrainsMono_500Medium',
+  },
+  radius: 22,
   radiusSm: 14,
 };
 
 export type Theme = typeof theme;
+
+// Degradado de fondo tipo malla (cabina): negro con glow azul arriba.
+export const BG_GRADIENT = ['#0B1220', '#05070D', '#000000'] as const;
 
 // Estados de alerta (4): OK · ADVERTENCIA · PELIGRO · SIN DATOS
 export type AlertState = 'ok' | 'warn' | 'danger' | 'nodata';
