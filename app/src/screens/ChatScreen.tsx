@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   messages: { padding: 18, paddingBottom: 130, gap: 16 },
   iaTag: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingLeft: 4 },
-  iaTagText: { fontSize: 11, fontWeight: '600', letterSpacing: 0.5, color: theme.colors.accent },
+  iaTagText: { fontSize: 10.5, fontFamily: theme.font.label, letterSpacing: 1.2, color: theme.colors.accent },
   bubble: { maxWidth: '80%', paddingHorizontal: 15, paddingVertical: 12, borderRadius: 18 },
   user: { backgroundColor: theme.colors.primary, borderBottomRightRadius: 6 },
   marex: {
@@ -106,8 +106,8 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.hairline,
     borderBottomLeftRadius: 6,
   },
-  userText: { color: '#fff', fontSize: 14.5, lineHeight: 22 },
-  marexText: { color: theme.colors.text, fontSize: 14.5, lineHeight: 22 },
+  userText: { color: '#fff', fontSize: 14.5, fontFamily: theme.font.displayMed, lineHeight: 21 },
+  marexText: { color: theme.colors.text, fontSize: 14.5, fontFamily: theme.font.displayLight, lineHeight: 21 },
   composer: {
     position: 'absolute',
     left: 0,
@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 12,
     fontSize: 14.5,
+    fontFamily: theme.font.displayLight,
   },
   sendBtn: {
     width: 44,

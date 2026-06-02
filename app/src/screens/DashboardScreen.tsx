@@ -10,6 +10,7 @@ import { StatCard } from '../components/StatCard';
 import { Compass } from '../components/Compass';
 import { LivePill, StatusBadge } from '../components/Badges';
 import { Ic } from '../components/icons';
+import { Reveal } from '../components/Reveal';
 
 export function DashboardScreen() {
   const data = useSimulator();
@@ -23,7 +24,7 @@ export function DashboardScreen() {
       <Header showLogo sub={`EMBARCACIÓN · ${boatName.toUpperCase()}`} title="A bordo" right={<LivePill />} />
 
       {/* hero: brújula + profundidad/velocidad */}
-      <View style={styles.section}>
+      <Reveal delay={60} style={styles.section}>
         <Card style={styles.hero} state={shallow ? 'danger' : undefined}>
           <Compass heading={data.cog} size={150} />
           <View style={styles.heroRight}>
@@ -50,10 +51,10 @@ export function DashboardScreen() {
             </View>
           </View>
         </Card>
-      </View>
+      </Reveal>
 
       {/* grid de stats */}
-      <View style={styles.section}>
+      <Reveal delay={140} style={styles.section}>
         <View style={styles.row}>
           <StatCard
             label="Viento"
@@ -87,10 +88,10 @@ export function DashboardScreen() {
             sub="Sensor Fase 2"
           />
         </View>
-      </View>
+      </Reveal>
 
       {/* posición / geofence */}
-      <View style={styles.section}>
+      <Reveal delay={220} style={styles.section}>
         <Card>
           <View style={styles.posHead}>
             <Text style={styles.sectionLabel}>Posición</Text>
@@ -115,7 +116,7 @@ export function DashboardScreen() {
             </View>
           </View>
         </Card>
-      </View>
+      </Reveal>
     </ScrollView>
   );
 }
@@ -128,22 +129,22 @@ const styles = StyleSheet.create({
   heroRight: { flex: 1, flexDirection: 'column', gap: 14 },
   labelRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   label: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: 0.6,
+    fontSize: 10.5,
+    fontFamily: theme.font.label,
+    letterSpacing: 1.4,
     textTransform: 'uppercase',
     color: theme.colors.textMuted,
   },
-  bigRow: { flexDirection: 'row', alignItems: 'baseline', gap: 5, marginTop: 2 },
-  big: { fontSize: 38, fontWeight: '200', letterSpacing: -1.2, color: theme.colors.text },
-  unit: { fontSize: 20, fontWeight: '300', color: theme.colors.textMuted },
+  bigRow: { flexDirection: 'row', alignItems: 'baseline', gap: 5, marginTop: 3 },
+  big: { fontSize: 42, fontFamily: theme.font.displayThin, letterSpacing: -0.5, color: theme.colors.text },
+  unit: { fontSize: 16, fontFamily: theme.font.mono, color: theme.colors.textMuted },
   divider: { height: 0.5, backgroundColor: theme.colors.hairline },
   row: { flexDirection: 'row', gap: 10 },
   posHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
   sectionLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    letterSpacing: 1.5,
+    fontSize: 12,
+    fontFamily: theme.font.label,
+    letterSpacing: 1.8,
     textTransform: 'uppercase',
     color: theme.colors.textMuted,
   },
@@ -177,5 +178,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
   },
   posRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 },
-  posVal: { fontSize: 15, color: theme.colors.text, marginTop: 2 },
+  posVal: { fontSize: 13.5, fontFamily: theme.font.mono, color: theme.colors.text, marginTop: 4 },
 });

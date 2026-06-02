@@ -32,7 +32,7 @@ export function TabBar({ active, onNav }: { active: TabKey; onNav: (k: TabKey) =
             </View>
           ) : null}
         </View>
-        <Text style={[styles.label, { color, fontWeight: on ? '600' : '500' }]}>{t.label}</Text>
+        <Text style={[styles.label, { color }]}>{t.label}</Text>
       </Pressable>
     );
   };
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
   tab: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 4, paddingVertical: 4 },
-  label: { fontSize: 10, letterSpacing: 0.2 },
+  label: { fontSize: 9.5, fontFamily: theme.font.label, letterSpacing: 0.8, textTransform: 'uppercase' },
   fab: {
     width: 60,
     height: 60,
@@ -106,5 +106,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  badgeText: { color: '#fff', fontSize: 9.5, fontWeight: '700' },
+  badgeText: { color: '#fff', fontSize: 9.5, fontFamily: theme.font.monoMed },
 });
