@@ -47,3 +47,6 @@ Thumbs.db
 
 # ---- Claude Code (config local de la máquina) ----
 .claude/
+
+# ---- graphify (salida local de la herramienta de grafo) ----
+graphify-out/
