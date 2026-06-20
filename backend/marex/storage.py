@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
+import threading
 from collections.abc import Iterable
 from datetime import datetime, timezone
 
@@ -9,7 +10,10 @@ from marex.signals import Signal, SignalType
 
 class SignalStore:
     def __init__(self, db_path: str = ":memory:") -> None:
-        self._conn = sqlite3.connect(db_path)
+        # check_same_thread=False + lock: el backend accede desde el hilo del
+        # servidor y el hilo de ingestión. El lock serializa las operaciones.
+        self._lock = threading.Lock()
+        self._conn = sqlite3.connect(db_path, check_same_thread=False)
         self._conn.execute(
             """
             CREATE TABLE IF NOT EXISTS signals (
@@ -39,37 +43,41 @@ class SignalStore:
         )
 
     def append(self, signal: Signal) -> None:
-        self._conn.execute(
-            "INSERT INTO signals (type, value, timestamp, unit) VALUES (?, ?, ?, ?)",
-            self._row_values(signal),
-        )
-        self._conn.commit()
+        with self._lock:
+            self._conn.execute(
+                "INSERT INTO signals (type, value, timestamp, unit) VALUES (?, ?, ?, ?)",
+                self._row_values(signal),
+            )
+            self._conn.commit()
 
     def append_many(self, signals: Iterable[Signal]) -> None:
         rows = [self._row_values(signal) for signal in signals]
-        self._conn.executemany(
-            "INSERT INTO signals (type, value, timestamp, unit) VALUES (?, ?, ?, ?)",
-            rows,
-        )
-        self._conn.commit()
+        with self._lock:
+            self._conn.executemany(
+                "INSERT INTO signals (type, value, timestamp, unit) VALUES (?, ?, ?, ?)",
+                rows,
+            )
+            self._conn.commit()
 
     def latest(self, signal_type: SignalType) -> Signal | None:
-        row = self._conn.execute(
-            "SELECT type, value, timestamp, unit FROM signals "
-            "WHERE type = ? ORDER BY timestamp DESC LIMIT 1",
-            (signal_type.value,),
-        ).fetchone()
+        with self._lock:
+            row = self._conn.execute(
+                "SELECT type, value, timestamp, unit FROM signals "
+                "WHERE type = ? ORDER BY timestamp DESC LIMIT 1",
+                (signal_type.value,),
+            ).fetchone()
         return self._row_to_signal(row) if row else None
 
     def history(
         self, signal_type: SignalType, since: datetime, until: datetime
     ) -> list[Signal]:
-        rows = self._conn.execute(
-            "SELECT type, value, timestamp, unit FROM signals "
-            "WHERE type = ? AND timestamp >= ? AND timestamp <= ? "
-            "ORDER BY timestamp ASC",
-            (signal_type.value, since.isoformat(), until.isoformat()),
-        ).fetchall()
+        with self._lock:
+            rows = self._conn.execute(
+                "SELECT type, value, timestamp, unit FROM signals "
+                "WHERE type = ? AND timestamp >= ? AND timestamp <= ? "
+                "ORDER BY timestamp ASC",
+                (signal_type.value, since.isoformat(), until.isoformat()),
+            ).fetchall()
         return [self._row_to_signal(row) for row in rows]
 
     def close(self) -> None:
