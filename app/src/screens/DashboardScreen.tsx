@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { theme } from '../theme';
-import { useSimulator } from '../simulator';
+import { useBoatState } from '../useBoatState';
 import { useSettings } from '../SettingsContext';
 import { cardinal, formatLat, formatLon, depthInUnit } from '../format';
 import { Header } from '../components/Header';
@@ -13,7 +13,7 @@ import { Ic } from '../components/icons';
 import { Reveal } from '../components/Reveal';
 
 export function DashboardScreen() {
-  const data = useSimulator();
+  const { data, conn } = useBoatState();
   const { depthUnit, depthAlarm, boatName } = useSettings();
 
   const depthVal = depthInUnit(data.depth, depthUnit);
@@ -21,7 +21,20 @@ export function DashboardScreen() {
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-      <Header showLogo sub={`EMBARCACIÓN · ${boatName.toUpperCase()}`} title="A bordo" right={<LivePill />} />
+      <Header
+        showLogo
+        sub={`EMBARCACIÓN · ${boatName.toUpperCase()}`}
+        title="A bordo"
+        right={
+          conn === 'live' ? (
+            <LivePill label="EN VIVO" color={theme.colors.ok} />
+          ) : conn === 'sim' ? (
+            <LivePill label="SIMULADOR" color={theme.colors.warning} />
+          ) : (
+            <LivePill label="CONECTANDO" color={theme.colors.textMuted} />
+          )
+        }
+      />
 
       {/* hero: brújula + profundidad/velocidad */}
       <Reveal delay={60} style={styles.section}>

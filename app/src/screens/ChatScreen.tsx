@@ -13,6 +13,7 @@ import { theme } from '../theme';
 import { sample } from '../simulator';
 import { useSettings } from '../SettingsContext';
 import { cardinal, formatDepth, formatLat, formatLon } from '../format';
+import { sendChat } from '../api';
 import { Header } from '../components/Header';
 import { LivePill } from '../components/Badges';
 import { MarexMark } from '../components/MarexMark';
@@ -20,9 +21,8 @@ import { Ic } from '../components/icons';
 
 type Msg = { id: number; from: 'user' | 'marex'; text: string };
 
-// Respondedor local provisional (sin LLM todavía). Cuando esté el backend,
-// esto se reemplaza por el servicio conversacional (Llama 3.1 8B / Claude API).
-function reply(question: string, depthUnit: 'm' | 'ft'): string {
+// Respondedor local de respaldo: solo se usa si el backend no responde.
+function localReply(question: string, depthUnit: 'm' | 'ft'): string {
   const q = question.toLowerCase();
   const now = sample((Date.now() / 1000) % 100000);
   if (/(profund|sonda|cala)/.test(q)) return `Profundidad actual: ${formatDepth(now.depth, depthUnit)}.`;
@@ -30,27 +30,37 @@ function reply(question: string, depthUnit: 'm' | 'ft'): string {
   if (/(rumbo|cog|direcc)/.test(q)) return `Rumbo ${Math.round(now.cog)}° (${cardinal(now.cog)}).`;
   if (/(viento|wind)/.test(q)) return `Viento de ${now.windSpeed.toFixed(1)} kn desde ${Math.round(now.windAngle)}° (${cardinal(now.windAngle)}).`;
   if (/(posic|donde|dónde|ubica|gps|coorden)/.test(q)) return `Posición:\n${formatLat(now.lat)}\n${formatLon(now.lon)}.`;
-  if (/(fonde|ancla|garr)/.test(q)) return 'No hay un fondeo activo. Cuando fondees podré vigilar el garreo del ancla.';
-  if (/(hola|buenas|hey|capit)/.test(q)) return '¡Hola, capitán! Preguntame por la profundidad, velocidad, rumbo, viento o posición.';
-  return 'Por ahora puedo responder sobre profundidad, velocidad, rumbo, viento y posición. (El asistente completo con IA llega en la próxima fase.)';
+  return 'Sin conexión con el cerebro de a bordo. Verifica que el servidor de Marex esté encendido (Ajustes › Servidor).';
 }
 
 export function ChatScreen() {
-  const { depthUnit } = useSettings();
+  const { depthUnit, serverUrl } = useSettings();
   const [text, setText] = useState('');
+  const [busy, setBusy] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
     { id: 0, from: 'marex', text: 'Buenos días, capitán. Todo en orden. Preguntame por el estado del barco: profundidad, velocidad, rumbo, viento o posición.' },
   ]);
   const idRef = useRef(1);
   const scrollRef = useRef<ScrollView>(null);
 
-  function send() {
+  async function send() {
     const trimmed = text.trim();
-    if (!trimmed) return;
+    if (!trimmed || busy) return;
     const userMsg: Msg = { id: idRef.current++, from: 'user', text: trimmed };
-    const marexMsg: Msg = { id: idRef.current++, from: 'marex', text: reply(trimmed, depthUnit) };
-    setMessages((m) => [...m, userMsg, marexMsg]);
+    setMessages((m) => [...m, userMsg]);
     setText('');
+    setBusy(true);
+    requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+
+    let replyText: string;
+    try {
+      replyText = await sendChat(serverUrl, trimmed);
+    } catch {
+      replyText = localReply(trimmed, depthUnit);
+    }
+    const marexMsg: Msg = { id: idRef.current++, from: 'marex', text: replyText };
+    setMessages((m) => [...m, marexMsg]);
+    setBusy(false);
     requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
   }
 
@@ -74,6 +84,17 @@ export function ChatScreen() {
             </View>
           );
         })}
+        {busy ? (
+          <View style={{ alignItems: 'flex-start', gap: 6 }}>
+            <View style={styles.iaTag}>
+              <MarexMark size={17} />
+              <Text style={styles.iaTagText}>MAREX IA</Text>
+            </View>
+            <View style={[styles.bubble, styles.marex]}>
+              <Text style={[styles.marexText, { color: theme.colors.textMuted }]}>escribiendo…</Text>
+            </View>
+          </View>
+        ) : null}
       </ScrollView>
       <View style={styles.composer}>
         <TextInput

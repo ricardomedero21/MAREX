@@ -40,7 +40,8 @@ function Row({ icon, title, sub, right }: { icon: React.ReactNode; title: string
 }
 
 export function SettingsScreen() {
-  const { depthUnit, setDepthUnit, depthAlarm, setDepthAlarm, boatName, setBoatName } = useSettings();
+  const { depthUnit, setDepthUnit, depthAlarm, setDepthAlarm, boatName, setBoatName, serverUrl, setServerUrl } =
+    useSettings();
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
@@ -65,6 +66,26 @@ export function SettingsScreen() {
           <StatusBadge state="ok" text="CONECTADO" />
         </Card>
       </View>
+
+      <Group title="Conexión">
+        <Row
+          icon={<Ic.signal size={20} color={theme.colors.accent} />}
+          title="Servidor de Marex"
+          sub="IP del backend (PC/Jetson). Ej: http://192.168.1.100:8000"
+        />
+        <View style={styles.serverRow}>
+          <TextInput
+            style={styles.serverInput}
+            value={serverUrl}
+            onChangeText={setServerUrl}
+            placeholder="http://192.168.1.100:8000"
+            placeholderTextColor={theme.colors.textMuted}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="url"
+          />
+        </View>
+      </Group>
 
       <Group title="Instrumentos">
         <Row
@@ -135,6 +156,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 0.5,
     borderColor: theme.colors.hairlineStrong,
+  },
+  serverRow: { paddingHorizontal: 16, paddingBottom: 14 },
+  serverInput: {
+    backgroundColor: theme.colors.background,
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: theme.colors.hairline,
+    color: theme.colors.text,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 13,
+    fontFamily: theme.font.mono,
   },
   vesselName: { fontSize: 18, fontFamily: theme.font.display, color: theme.colors.text, padding: 0 },
   vesselSub: { fontSize: 11.5, fontFamily: theme.font.mono, color: theme.colors.textMuted, marginTop: 3 },

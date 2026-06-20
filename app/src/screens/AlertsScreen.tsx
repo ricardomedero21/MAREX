@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { theme, STATUS, AlertState } from '../theme';
-import { useSimulator } from '../simulator';
+import { useBoatState } from '../useBoatState';
 import { useSettings } from '../SettingsContext';
 import { formatDepth } from '../format';
 import { Header } from '../components/Header';
@@ -32,7 +32,7 @@ function AlertRow({ a }: { a: Alert }) {
 }
 
 export function AlertsScreen() {
-  const data = useSimulator();
+  const { data } = useBoatState();
   const { depthUnit, depthAlarm } = useSettings();
   const shallow = data.depth < depthAlarm;
 
