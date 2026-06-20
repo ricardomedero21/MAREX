@@ -12,14 +12,14 @@ import {
 import { theme } from '../theme';
 import { sample } from '../simulator';
 import { useSettings } from '../SettingsContext';
+import { useChat } from '../ChatContext';
 import { cardinal, formatDepth, formatLat, formatLon } from '../format';
 import { sendChat } from '../api';
 import { Header } from '../components/Header';
 import { LivePill } from '../components/Badges';
 import { MarexMark } from '../components/MarexMark';
 import { Ic } from '../components/icons';
-
-type Msg = { id: number; from: 'user' | 'marex'; text: string };
+import { ChatList } from '../components/ChatList';
 
 // Respondedor local de respaldo: solo se usa si el backend no responde.
 function localReply(question: string, depthUnit: 'm' | 'ft'): string {
@@ -35,20 +35,17 @@ function localReply(question: string, depthUnit: 'm' | 'ft'): string {
 
 export function ChatScreen() {
   const { depthUnit, serverUrl } = useSettings();
-  const [text, setText] = useState('');
+  const { active, appendMessage, nextMsgId, draft, setDraft } = useChat();
   const [busy, setBusy] = useState(false);
-  const [messages, setMessages] = useState<Msg[]>([
-    { id: 0, from: 'marex', text: 'Buenos días, capitán. Todo en orden. Preguntame por el estado del barco: profundidad, velocidad, rumbo, viento o posición.' },
-  ]);
-  const idRef = useRef(1);
+  const [listOpen, setListOpen] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
+  const messages = active.messages;
 
   async function send() {
-    const trimmed = text.trim();
+    const trimmed = draft.trim();
     if (!trimmed || busy) return;
-    const userMsg: Msg = { id: idRef.current++, from: 'user', text: trimmed };
-    setMessages((m) => [...m, userMsg]);
-    setText('');
+    appendMessage({ id: nextMsgId(), from: 'user', text: trimmed });
+    setDraft('');
     setBusy(true);
     requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
 
@@ -58,15 +55,26 @@ export function ChatScreen() {
     } catch {
       replyText = localReply(trimmed, depthUnit);
     }
-    const marexMsg: Msg = { id: idRef.current++, from: 'marex', text: replyText };
-    setMessages((m) => [...m, marexMsg]);
+    appendMessage({ id: nextMsgId(), from: 'marex', text: replyText });
     setBusy(false);
     requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
   }
 
   return (
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <Header showLogo sub="ASISTENTE NÁUTICO" title="Marex IA" right={<LivePill label="A BORDO" color={theme.colors.accent} />} />
+      <Header
+        showLogo
+        sub="ASISTENTE NÁUTICO"
+        title="Marex IA"
+        right={
+          <View style={styles.headerBtns}>
+            <Pressable style={styles.headerBtn} onPress={() => setListOpen((v) => !v)}>
+              <Ic.compass size={20} color={listOpen ? theme.colors.accent : theme.colors.textMuted} />
+            </Pressable>
+          </View>
+        }
+      />
+      {listOpen ? <ChatList onClose={() => setListOpen(false)} /> : null}
       <ScrollView ref={scrollRef} style={styles.flex} contentContainerStyle={styles.messages}>
         {messages.map((m) => {
           const me = m.from === 'user';
@@ -99,8 +107,8 @@ export function ChatScreen() {
       <View style={styles.composer}>
         <TextInput
           style={styles.input}
-          value={text}
-          onChangeText={setText}
+          value={draft}
+          onChangeText={setDraft}
           placeholder="Pregunta a Marex…"
           placeholderTextColor={theme.colors.textMuted}
           onSubmitEditing={send}
@@ -116,6 +124,17 @@ export function ChatScreen() {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  headerBtns: { flexDirection: 'row', gap: 8 },
+  headerBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: theme.colors.surfaceElevated,
+    borderWidth: 0.5,
+    borderColor: theme.colors.hairline,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   messages: { padding: 18, paddingBottom: 130, gap: 16 },
   iaTag: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingLeft: 4 },
   iaTagText: { fontSize: 10.5, fontFamily: theme.font.label, letterSpacing: 1.2, color: theme.colors.accent },
