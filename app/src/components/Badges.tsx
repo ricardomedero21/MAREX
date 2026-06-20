@@ -37,7 +37,7 @@ export function LivePill({
   color?: string;
 }) {
   return (
-    <View style={[styles.pill, { backgroundColor: 'rgba(0,200,150,0.10)', borderColor: 'rgba(0,200,150,0.30)' }]}>
+    <View style={[styles.pill, { backgroundColor: color + '1A', borderColor: color + '4D' }]}>
       <PulseDot color={color} />
       <Text style={[styles.pillText, { color }]}>{label}</Text>
     </View>
