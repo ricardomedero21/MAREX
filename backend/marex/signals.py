@@ -13,6 +13,9 @@ class SignalType(str, Enum):
     LONGITUDE = "longitude"
     WIND_SPEED = "wind_speed"
     WIND_ANGLE = "wind_angle"
+    BATTERY = "battery"           # voltaje de la bateria de servicio
+    FUEL = "fuel"                 # nivel de combustible (% del tanque)
+    ENGINE_TEMP = "engine_temp"   # temperatura del motor
 
 
 UNITS: dict[SignalType, str] = {
@@ -23,6 +26,9 @@ UNITS: dict[SignalType, str] = {
     SignalType.LONGITUDE: "deg",
     SignalType.WIND_SPEED: "kn",
     SignalType.WIND_ANGLE: "deg",
+    SignalType.BATTERY: "V",
+    SignalType.FUEL: "%",
+    SignalType.ENGINE_TEMP: "°C",
 }
 
 
