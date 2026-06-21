@@ -12,6 +12,8 @@ export type Sample = {
   lon: number; // grados decimales
   windSpeed: number; // nudos
   windAngle: number; // grados
+  battery: number; // voltios
+  fuel: number; // %
 };
 
 const BASE_LAT = 25.7617;
@@ -26,6 +28,8 @@ export function sample(elapsed: number): Sample {
     lon: BASE_LON + 0.0005 * Math.cos(elapsed / 60),
     windSpeed: 12 + 4 * Math.sin(elapsed / 45), // 8..16 kn
     windAngle: (elapsed * 1.5) % 360,
+    battery: 12.4 + 0.4 * Math.sin(elapsed / 90), // 12.0..12.8 V
+    fuel: 60 + 30 * Math.sin(elapsed / 300), // 30..90 %
   };
 }
 

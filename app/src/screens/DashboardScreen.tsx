@@ -87,18 +87,19 @@ export function DashboardScreen() {
         <View style={[styles.row, { marginTop: 10 }]}>
           <StatCard
             label="Combustible"
-            value="—"
+            value={data.fuel != null ? data.fuel.toFixed(0) : '—'}
             unit="%"
             icon={<Ic.fuel size={16} color={theme.colors.textMuted} />}
-            state="normal"
-            sub="Sensor Fase 2"
+            state={data.fuel != null && data.fuel < 15 ? 'danger' : data.fuel != null && data.fuel < 25 ? 'warning' : 'normal'}
+            sub={data.fuel != null ? 'Nivel del tanque' : 'Sin dato'}
           />
           <StatCard
             label="Batería"
-            value="—"
+            value={data.battery != null ? data.battery.toFixed(1) : '—'}
             unit="V"
             icon={<Ic.battery size={16} color={theme.colors.textMuted} />}
-            sub="Sensor Fase 2"
+            state={data.battery != null && data.battery < 11.8 ? 'danger' : 'normal'}
+            sub={data.battery != null ? 'Servicio' : 'Sin dato'}
           />
         </View>
       </Reveal>

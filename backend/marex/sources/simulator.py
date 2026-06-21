@@ -26,6 +26,9 @@ class SimulatorSource(DataSource):
         lon = BASE_LON + 0.0005 * math.cos(elapsed / 60.0)
         wind_speed = 12.0 + 4.0 * math.sin(elapsed / 45.0)   # 8..16 kn
         wind_angle = (elapsed * 1.5) % 360.0
+        battery = 12.4 + 0.4 * math.sin(elapsed / 90.0)      # 12.0..12.8 V
+        fuel = 60.0 + 30.0 * math.sin(elapsed / 300.0)       # 30..90 %
+        engine_temp = 80.0 + 10.0 * math.sin(elapsed / 120.0)  # 70..90 C
         return [
             Signal.create(SignalType.DEPTH, depth, ts),
             Signal.create(SignalType.SOG, sog, ts),
@@ -34,6 +37,9 @@ class SimulatorSource(DataSource):
             Signal.create(SignalType.LONGITUDE, lon, ts),
             Signal.create(SignalType.WIND_SPEED, wind_speed, ts),
             Signal.create(SignalType.WIND_ANGLE, wind_angle, ts),
+            Signal.create(SignalType.BATTERY, battery, ts),
+            Signal.create(SignalType.FUEL, fuel, ts),
+            Signal.create(SignalType.ENGINE_TEMP, engine_temp, ts),
         ]
 
     def stream(self) -> Iterator[list[Signal]]:

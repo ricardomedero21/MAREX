@@ -20,6 +20,9 @@ def test_sample_values_are_in_realistic_ranges():
         assert 8.0 <= by_type[SignalType.WIND_SPEED] <= 16.0
         assert 24.0 <= by_type[SignalType.LATITUDE] <= 27.0
         assert -81.0 <= by_type[SignalType.LONGITUDE] <= -79.0
+        assert 12.0 <= by_type[SignalType.BATTERY] <= 12.8
+        assert 30.0 <= by_type[SignalType.FUEL] <= 90.0
+        assert 70.0 <= by_type[SignalType.ENGINE_TEMP] <= 90.0
 
 
 def test_sample_is_deterministic():
