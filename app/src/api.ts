@@ -91,6 +91,13 @@ export function setGeofence(baseUrl: string, clear: boolean, radius_m = 100): Pr
   return postJson(baseUrl, '/alerts/geofence', { clear, radius_m });
 }
 
+export function setConfig(
+  baseUrl: string,
+  cfg: { depth_min?: number; battery_min?: number; fuel_min?: number; fuel_warn?: number },
+): Promise<ConfigOut> {
+  return postJson(baseUrl, '/alerts/config', cfg);
+}
+
 export function fetchConfig(baseUrl: string): Promise<ConfigOut> {
   return withTimeout(`${baseUrl}/alerts/config`, {}, 4000).then((r) => {
     if (!r.ok) throw new Error(`config HTTP ${r.status}`);

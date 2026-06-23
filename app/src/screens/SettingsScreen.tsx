@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { theme } from '../theme';
 import { useSettings } from '../SettingsContext';
+import { setConfig } from '../api';
 import { formatDepth } from '../format';
 import { Header } from '../components/Header';
 import { Card } from '../components/Card';
@@ -42,6 +43,15 @@ function Row({ icon, title, sub, right }: { icon: React.ReactNode; title: string
 export function SettingsScreen() {
   const { depthUnit, setDepthUnit, depthAlarm, setDepthAlarm, boatName, setBoatName, serverUrl, setServerUrl } =
     useSettings();
+
+  // Sincroniza el umbral de profundidad con el motor de alertas del backend
+  // (depthAlarm está en metros, igual que depth_min). Debounce para el stepper.
+  useEffect(() => {
+    const id = setTimeout(() => {
+      setConfig(serverUrl, { depth_min: depthAlarm }).catch(() => {});
+    }, 400);
+    return () => clearTimeout(id);
+  }, [depthAlarm, serverUrl]);
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>

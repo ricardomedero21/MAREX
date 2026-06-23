@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -40,6 +41,23 @@ export function ChatScreen() {
   const [listOpen, setListOpen] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
   const messages = active.messages;
+  const [kbOpen, setKbOpen] = useState(false);
+
+  // Cuando el teclado está abierto, el composer se pega a él (sin hueco para
+  // la tab bar, que queda oculta); cuando está cerrado, deja espacio sobre la
+  // tab bar flotante.
+  useEffect(() => {
+    const show = Keyboard.addListener('keyboardWillShow', () => setKbOpen(true));
+    const hide = Keyboard.addListener('keyboardWillHide', () => setKbOpen(false));
+    const showA = Keyboard.addListener('keyboardDidShow', () => setKbOpen(true));
+    const hideA = Keyboard.addListener('keyboardDidHide', () => setKbOpen(false));
+    return () => {
+      show.remove();
+      hide.remove();
+      showA.remove();
+      hideA.remove();
+    };
+  }, []);
 
   async function send() {
     const trimmed = draft.trim();
@@ -108,7 +126,7 @@ export function ChatScreen() {
           </View>
         ) : null}
       </ScrollView>
-      <View style={styles.composer}>
+      <View style={[styles.composer, { paddingBottom: kbOpen ? 10 : 110 }]}>
         <TextInput
           style={styles.input}
           value={draft}
@@ -155,7 +173,6 @@ const styles = StyleSheet.create({
   composer: {
     paddingHorizontal: 18,
     paddingTop: 8,
-    paddingBottom: 110, // espacio sobre la tab bar flotante
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
