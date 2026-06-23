@@ -1,0 +1,32 @@
+# Marex — despliegue en la Jetson Orin Nano.
+# Dos servicios resilientes: si uno se cae, se reinicia solo y no tumba al otro.
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: marex-ollama
+    restart: unless-stopped
+    runtime: nvidia # usa la GPU de la Jetson
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - OLLAMA_HOST=0.0.0.0
+    volumes:
+      - ollama_models:/root/.ollama # persiste el modelo descargado
+    ports:
+      - "11434:11434" # expuesto para depurar; el backend lo usa por red interna
+
+  backend:
+    build: ./backend
+    container_name: marex-backend
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    environment:
+      # Dentro de la red de compose, Ollama es accesible por su nombre de servicio.
+      - MAREX_OLLAMA_HOST=http://ollama:11434
+      - MAREX_LLM_MODEL=gemma2:2b
+    ports:
+      - "8000:8000" # la app del barco se conecta aquí
+
+volumes:
+  ollama_models:

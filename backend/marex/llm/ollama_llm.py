@@ -1,20 +1,23 @@
 from __future__ import annotations
 
 import json
+import os
 import urllib.error
 import urllib.request
 
 from marex.llm.base import LLM, LLMUnavailable, Message
 
-DEFAULT_HOST = "http://localhost:11434"
-DEFAULT_MODEL = "gemma2:2b"
+# Configurables por entorno (para Docker/Jetson sin tocar código).
+DEFAULT_HOST = os.environ.get("MAREX_OLLAMA_HOST", "http://localhost:11434")
+DEFAULT_MODEL = os.environ.get("MAREX_LLM_MODEL", "gemma2:2b")
 
 
 class OllamaLLM(LLM):
     """LLM que habla con un servidor Ollama por HTTP (/api/chat).
 
-    Sin dependencias externas: usa urllib de la stdlib. El modelo es
-    configurable para poder cambiarlo entre la PC y la Jetson.
+    Sin dependencias externas: usa urllib de la stdlib. El modelo y el host
+    son configurables (por argumento o por variable de entorno) para poder
+    cambiarlos entre la PC, Docker y la Jetson.
     """
 
     def __init__(
