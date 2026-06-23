@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { theme, STATUS, AlertState } from '../theme';
 import { useSettings } from '../SettingsContext';
-import { AlertOut, fetchAlerts, fetchConfig, setAnchor, setGeofence } from '../api';
+import { useAlerts } from '../AlertsContext';
+import { AlertOut, fetchConfig, setAnchor, setGeofence } from '../api';
 import { Header } from '../components/Header';
 import { Card } from '../components/Card';
 import { StatusBadge } from '../components/Badges';
@@ -39,28 +40,24 @@ function AlertRow({ a }: { a: AlertOut }) {
 
 export function AlertsScreen() {
   const { serverUrl } = useSettings();
-  const [alerts, setAlerts] = useState<AlertOut[]>([]);
+  const { alerts, offline, refresh } = useAlerts();
   const [anchorSet, setAnchorSet] = useState(false);
   const [geofenceSet, setGeofenceSet] = useState(false);
-  const [offline, setOffline] = useState(false);
 
-  const refresh = useCallback(async () => {
+  // Estado de fondeo/zona desde la config (el polling de alertas vive en el contexto).
+  const loadConfig = useCallback(async () => {
     try {
-      const [a, c] = await Promise.all([fetchAlerts(serverUrl), fetchConfig(serverUrl)]);
-      setAlerts(a);
+      const c = await fetchConfig(serverUrl);
       setAnchorSet(c.anchor_set);
       setGeofenceSet(c.geofence_set);
-      setOffline(false);
     } catch {
-      setOffline(true);
+      /* offline ya lo maneja el contexto */
     }
   }, [serverUrl]);
 
   useEffect(() => {
-    refresh();
-    const id = setInterval(refresh, 2000);
-    return () => clearInterval(id);
-  }, [refresh]);
+    loadConfig();
+  }, [loadConfig]);
 
   async function toggleAnchor() {
     try {
@@ -68,7 +65,7 @@ export function AlertsScreen() {
       setAnchorSet(c.anchor_set);
       refresh();
     } catch {
-      setOffline(true);
+      /* offline lo maneja el contexto */
     }
   }
 
@@ -78,7 +75,7 @@ export function AlertsScreen() {
       setGeofenceSet(c.geofence_set);
       refresh();
     } catch {
-      setOffline(true);
+      /* offline lo maneja el contexto */
     }
   }
 

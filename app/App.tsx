@@ -12,6 +12,7 @@ import { JetBrainsMono_400Regular, JetBrainsMono_500Medium } from '@expo-google-
 import { theme } from './src/theme';
 import { SettingsProvider } from './src/SettingsContext';
 import { ChatProvider } from './src/ChatContext';
+import { AlertsProvider } from './src/AlertsContext';
 import { ScreenBackground } from './src/components/Screen';
 import { TabBar, TabKey } from './src/components/TabBar';
 import { DashboardScreen } from './src/screens/DashboardScreen';
@@ -32,6 +33,7 @@ export default function App() {
 
   return (
     <SettingsProvider>
+      <AlertsProvider>
       <ChatProvider>
       <View style={styles.root}>
         <ScreenBackground />
@@ -51,6 +53,7 @@ export default function App() {
         </SafeAreaView>
       </View>
       </ChatProvider>
+      </AlertsProvider>
     </SettingsProvider>
   );
 }

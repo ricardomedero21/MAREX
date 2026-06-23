@@ -65,8 +65,8 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: theme.colors.textMuted,
   },
-  valueRow: { flexDirection: 'row', alignItems: 'baseline', gap: 6 },
-  value: { fontSize: 34, fontFamily: theme.font.displayThin, letterSpacing: -0.5, lineHeight: 36 },
+  valueRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 6 },
+  value: { fontSize: 30, fontFamily: theme.font.displayThin, letterSpacing: -0.5, lineHeight: 40, includeFontPadding: true },
   unit: { fontSize: 14, fontFamily: theme.font.mono, color: theme.colors.textMuted },
   sub: { fontSize: 11.5, fontFamily: theme.font.mono, color: theme.colors.textMuted },
 });

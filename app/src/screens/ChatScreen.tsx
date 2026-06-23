@@ -61,7 +61,11 @@ export function ChatScreen() {
   }
 
   return (
-    <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView
+      style={styles.flex}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+    >
       <Header
         showLogo
         sub="ASISTENTE NÁUTICO"
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  messages: { padding: 18, paddingBottom: 130, gap: 16 },
+  messages: { padding: 18, paddingBottom: 24, gap: 16 },
   iaTag: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingLeft: 4 },
   iaTagText: { fontSize: 10.5, fontFamily: theme.font.label, letterSpacing: 1.2, color: theme.colors.accent },
   bubble: { maxWidth: '80%', paddingHorizontal: 15, paddingVertical: 12, borderRadius: 18 },
@@ -146,17 +150,16 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.hairline,
     borderBottomLeftRadius: 6,
   },
-  userText: { color: '#fff', fontSize: 14.5, fontFamily: theme.font.displayMed, lineHeight: 21 },
-  marexText: { color: theme.colors.text, fontSize: 14.5, fontFamily: theme.font.displayLight, lineHeight: 21 },
+  userText: { color: '#fff', fontSize: 14.5, fontFamily: theme.font.displayMed, lineHeight: 22 },
+  marexText: { color: theme.colors.text, fontSize: 14.5, fontFamily: theme.font.displayLight, lineHeight: 22 },
   composer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 96,
     paddingHorizontal: 18,
+    paddingTop: 8,
+    paddingBottom: 110, // espacio sobre la tab bar flotante
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+    backgroundColor: theme.colors.background,
   },
   input: {
     flex: 1,
