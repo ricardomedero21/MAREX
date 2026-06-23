@@ -3,17 +3,21 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { theme } from '../theme';
 import { Ic, IconName } from './icons';
 import { MarexMark } from './MarexMark';
+import { useAlerts } from '../AlertsContext';
 
 export type TabKey = 'panel' | 'alertas' | 'ia' | 'ajustes';
 
-const TABS: { id: TabKey; label: string; icon: IconName; badge?: number }[] = [
+const TABS: { id: TabKey; label: string; icon: IconName }[] = [
   { id: 'panel', label: 'Panel', icon: 'gauge' },
-  { id: 'alertas', label: 'Alertas', icon: 'bell', badge: 1 },
+  { id: 'alertas', label: 'Alertas', icon: 'bell' },
   { id: 'ia', label: 'Marex IA', icon: 'compass' },
   { id: 'ajustes', label: 'Ajustes', icon: 'gear' },
 ];
 
 export function TabBar({ active, onNav }: { active: TabKey; onNav: (k: TabKey) => void }) {
+  const { activeCount } = useAlerts();
+  // Solo la pestaña de alertas muestra badge, y solo si hay alertas activas.
+  const badgeFor = (id: TabKey) => (id === 'alertas' && activeCount > 0 ? activeCount : undefined);
   // Inserta el FAB central entre alertas (idx 1) e ia (idx 2).
   const left = TABS.slice(0, 2);
   const right = TABS.slice(2);
@@ -22,13 +26,14 @@ export function TabBar({ active, onNav }: { active: TabKey; onNav: (k: TabKey) =
     const on = active === t.id;
     const color = on ? theme.colors.accent : theme.colors.textMuted;
     const Icon = Ic[t.icon];
+    const badge = badgeFor(t.id);
     return (
       <Pressable key={t.id} style={styles.tab} onPress={() => onNav(t.id)}>
         <View>
           <Icon size={23} color={color} strokeWidth={on ? 2 : 1.8} />
-          {t.badge ? (
+          {badge ? (
             <View style={styles.badge}>
-              <Text style={styles.badgeText}>{t.badge}</Text>
+              <Text style={styles.badgeText}>{badge}</Text>
             </View>
           ) : null}
         </View>

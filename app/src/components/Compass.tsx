@@ -79,7 +79,7 @@ export function Compass({ heading, size = 150 }: { heading: number; size?: numbe
 
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center' },
-  heading: { fontSize: 34, fontFamily: theme.font.displayThin, letterSpacing: -0.5, color: theme.colors.text, lineHeight: 36 },
+  heading: { fontSize: 30, fontFamily: theme.font.displayThin, letterSpacing: -0.5, color: theme.colors.text, lineHeight: 40 },
   headingLabel: {
     fontSize: 10,
     fontFamily: theme.font.label,
