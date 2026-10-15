@@ -1,32 +1,19 @@
 # Marex — despliegue en la Jetson Orin Nano.
-# Dos servicios resilientes: si uno se cae, se reinicia solo y no tumba al otro.
+#
+# Ollama corre NATIVO en la Jetson (instalador oficial, detecta JetPack y usa
+# la GPU): curl -fsSL https://ollama.com/install.sh | sh && ollama pull llama3.2:3b
+#
+# El backend usa la red del host para ver la interfaz SocketCAN (can0) del
+# RH-02 y llegar a Ollama en localhost. Antes: levantar can0 a 250 kbit/s.
 
 services:
-  ollama:
-    image: ollama/ollama:latest
-    container_name: marex-ollama
-    restart: unless-stopped
-    runtime: nvidia # usa la GPU de la Jetson
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-      - OLLAMA_HOST=0.0.0.0
-    volumes:
-      - ollama_models:/root/.ollama # persiste el modelo descargado
-    ports:
-      - "11434:11434" # expuesto para depurar; el backend lo usa por red interna
-
   backend:
     build: ./backend
     container_name: marex-backend
     restart: unless-stopped
-    depends_on:
-      - ollama
+    network_mode: host # necesario para SocketCAN (can0); expone el puerto 8000
     environment:
-      # Dentro de la red de compose, Ollama es accesible por su nombre de servicio.
-      - MAREX_OLLAMA_HOST=http://ollama:11434
-      - MAREX_LLM_MODEL=gemma2:2b
-    ports:
-      - "8000:8000" # la app del barco se conecta aquí
-
-volumes:
-  ollama_models:
+      - MAREX_DATA_SOURCE=${MAREX_DATA_SOURCE:-can} # can | simulator
+      - MAREX_CAN_CHANNEL=${MAREX_CAN_CHANNEL:-can0}
+      - MAREX_OLLAMA_HOST=http://localhost:11434
+      - MAREX_LLM_MODEL=${MAREX_LLM_MODEL:-llama3.2:3b}

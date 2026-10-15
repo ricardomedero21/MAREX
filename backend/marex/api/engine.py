@@ -15,7 +15,7 @@ from marex.llm.chat_service import ChatService
 from marex.llm.ollama_llm import OllamaLLM
 from marex.signals import SignalType
 from marex.sources.base import DataSource
-from marex.sources.simulator import SimulatorSource
+from marex.sources.factory import source_from_env
 from marex.storage import SignalStore
 
 
@@ -32,7 +32,7 @@ class MarexEngine:
         alerts: AlertEngine | None = None,
     ) -> None:
         self.store = store or SignalStore(":memory:")
-        self.source = source or SimulatorSource(interval=1.0)
+        self.source = source or source_from_env()
         self.chat = chat or ChatService(OllamaLLM(), self.store)
         self.alerts = alerts or AlertEngine()
         self._latest_alerts: list[Alert] = []

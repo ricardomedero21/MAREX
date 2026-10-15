@@ -20,7 +20,7 @@ conversacional. Corre sobre una **NVIDIA Jetson Orin Nano** a bordo, funciona
 | `sim/` | Python | Simulador de datos NMEA para desarrollo sin barco. |
 | `docs/` | Markdown | Specs de diseño y decisiones de arquitectura. |
 
-LLM local: **Llama 3.1 8B** cuantizado (Ollama/llama.cpp).
+LLM local: **Llama 3.2 3B** cuantizado vía Ollama (a validar en la Jetson).
 
 ## Fases
 
